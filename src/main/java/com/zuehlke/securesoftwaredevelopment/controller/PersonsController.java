@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -33,15 +34,17 @@ public class PersonsController {
     }
 
     @GetMapping("/persons/{id}")
-    public String person(@PathVariable int id, Model model) {
+    public String person(@PathVariable int id, Model model, HttpSession session) {
+        model.addAttribute("CSRF_TOKEN", session.getAttribute("CSRF_TOKEN"));
         model.addAttribute("person", personRepository.get("" + id));
         model.addAttribute("username", userRepository.findUsername(id));
         return "person";
     }
 
     @GetMapping("/myprofile")
-    public String self(Model model, Authentication authentication) {
+    public String self(Model model, Authentication authentication, HttpSession session) {
         User user = (User) authentication.getPrincipal();
+        model.addAttribute("CSRF_TOKEN", session.getAttribute("CSRF_TOKEN"));
         model.addAttribute("person", personRepository.get("" + user.getId()));
         model.addAttribute("username", userRepository.findUsername(user.getId()));
         return "person";
@@ -56,7 +59,11 @@ public class PersonsController {
     }
 
     @PostMapping("/update-person")
-    public String updatePerson(Person person, String username) {
+    public String updatePerson(Person person, String username, HttpSession session, @RequestParam("csrfToken") String csrfToken) {
+        String csrf = session.getAttribute("CSRF_TOKEN").toString();
+        if (!csrf.equals(csrfToken)) {
+            return "redirect:/error";
+        }
         personRepository.update(person);
         userRepository.updateUsername(Integer.parseInt(person.getId()), username);
         return "redirect:/persons/" + person.getId();
