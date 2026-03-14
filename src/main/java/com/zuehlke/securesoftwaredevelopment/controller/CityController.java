@@ -4,10 +4,12 @@ import com.zuehlke.securesoftwaredevelopment.config.AuditLogger;
 import com.zuehlke.securesoftwaredevelopment.domain.City;
 import com.zuehlke.securesoftwaredevelopment.domain.Country;
 import com.zuehlke.securesoftwaredevelopment.domain.Hotel;
+import com.zuehlke.securesoftwaredevelopment.domain.Hotel;
 import com.zuehlke.securesoftwaredevelopment.repository.CityRepository;
 import com.zuehlke.securesoftwaredevelopment.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,7 @@ public class CityController {
     }
 
     @GetMapping("/new-city")
+    @PreAuthorize("hasAuthority('CREATE_CITY')")
     public String newCity(
             Model model,
             @RequestParam(value = "cityInvalid", required = false) Boolean cityInvalid,
@@ -49,6 +52,7 @@ public class CityController {
     }
 
     @PostMapping("/cities/create")
+    @PreAuthorize("hasAuthority('CREATE_CITY')")
     public String createCity(
             @RequestParam Integer countryId,
             @RequestParam String name

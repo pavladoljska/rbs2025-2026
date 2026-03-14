@@ -41,27 +41,27 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" th:href="@{/hotels}"></a>
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('VIEW_HOTEL_LIST')">
                 <a class="nav-link" th:href="@{/hotels}">Hotels</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('VIEW_PERSONS_LIST')">
                 <a class="nav-link" th:href="@{/persons}">Users</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('VIEW_RESERVATION')">
                 <a class="nav-link" th:href="@{/reservations/view}">Reservations</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('CREATE_COUNTRY')">
                 <a class="nav-link" th:href="@{/new-country}">New Country</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('CREATE_CITY')">
                 <a class="nav-link" th:href="@{/new-city}">New City</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('CREATE_HOTEL')">
                 <a class="nav-link" th:href="@{/hotels/new-hotel}">New Hotel</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="hasAuthority('VIEW_MY_PROFILE')">
                 <a class="nav-link" th:href="@{/myprofile}">My Profile</a>
             </li>
             <li class="nav-item">

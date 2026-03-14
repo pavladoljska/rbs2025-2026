@@ -83,8 +83,30 @@ values (1, 3, 5),
 
 insert into roles(id, name)
 values (1, 'ADMIN'),
-       (2, 'MANAGER');
+       (2, 'MANAGER'),
+       (3, 'CUSTOMER');
 
 insert into user_to_roles(userId, roleId)
 values (4, 1),
-       (3, 2);
+       (3, 2),
+       (1, 3),
+       (2, 3);
+
+insert into permissions(id, name)
+values (1, 'VIEW_HOTEL_LIST'),
+       (2, 'VIEW_HOTEL'),
+       (3, 'CREATE_COUNTRY'),
+       (4, 'CREATE_CITY'),
+       (5, 'CREATE_HOTEL'),
+       (6, 'VIEW_PERSONS_LIST'),
+       (7, 'VIEW_PERSON'),
+       (8, 'UPDATE_PERSON'),
+       (9, 'VIEW_MY_PROFILE'),
+       (10, 'RATE_HOTEL'),
+       (11, 'CREATE_RESERVATION'),
+       (12, 'VIEW_RESERVATION');
+
+insert into role_to_permissions(roleId, permissionId)
+values (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12),
+       (2, 1), (2, 2), (2, 5), (2, 6), (2, 8), (2, 9), (2, 10), (2, 11),
+       (3, 1), (3, 2), (3, 8), (3, 9), (3, 11), (3, 12);
