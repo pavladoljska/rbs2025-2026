@@ -80,7 +80,10 @@ public class PersonsController {
         }
         personRepository.update(person);
         userRepository.updateUsername(Integer.parseInt(person.getId()), username);
-        return "redirect:/persons/" + person.getId();
+        if(SecurityUtil.hasPermission("VIEW_PERSON")) {
+            return "redirect:/persons/" + person.getId();
+        }
+        return "redirect:/myprofile";
     }
 
     @GetMapping("/persons")
