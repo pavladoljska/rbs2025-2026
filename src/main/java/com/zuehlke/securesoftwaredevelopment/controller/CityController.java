@@ -78,6 +78,7 @@ public class CityController {
         city.setName(name);
         city.setCountryId(countryId);
         cityRepository.create(city);
+        LOG.info("City created: name='{}', countryId={}", name, countryId);
 
         return "redirect:/new-city";
     }

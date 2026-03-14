@@ -36,7 +36,7 @@ public class CityRepository {
                 cityList.add(new City(id, countryId, name, countryName));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to retrieve all cities", e);
         }
 
         return cityList;
@@ -54,7 +54,7 @@ public class CityRepository {
                 return new City(id, countryId, name);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to find city with id={}", cityId, e);
         }
 
         return null;
@@ -77,7 +77,7 @@ public class CityRepository {
 
             return cityList;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to find city by name='{}'", name, e);
         }
 
         return null;
@@ -104,7 +104,7 @@ public class CityRepository {
 
             return id;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to create city with name='{}'", city.getName(), e);
         }
 
         return id;

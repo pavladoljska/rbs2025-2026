@@ -38,7 +38,7 @@ public class HotelRepository {
                 hotelList.add(new Hotel(id, cityId, name, description, address));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to get hotels for cityId={}", cityId, e);
         }
 
         return hotelList;
@@ -68,7 +68,7 @@ public class HotelRepository {
                 hotelList.add(hotel);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to retrieve all hotels", e);
         }
 
         return hotelList;
@@ -85,7 +85,7 @@ public class HotelRepository {
                 return crateHotelFromResultSet(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to get hotel with id={}", hotelId, e);
         }
 
         return null;
@@ -99,7 +99,7 @@ public class HotelRepository {
              ResultSet rs = statement.executeQuery(query)) {
             return rs.next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to check if hotel exists with id={}", hotelId, e);
         }
 
         return false;
@@ -128,7 +128,7 @@ public class HotelRepository {
 
             return id;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to create hotel with name='{}'", hotel.getName(), e);
         }
         return id;
     }

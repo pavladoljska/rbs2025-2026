@@ -1,6 +1,9 @@
 package com.zuehlke.securesoftwaredevelopment.config;
 
+import com.zuehlke.securesoftwaredevelopment.domain.User;
 import com.zuehlke.securesoftwaredevelopment.service.UserDetailsServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final AuditLogger auditLogger = AuditLogger.getAuditLogger(SecurityConfig.class);
 
     private final DatabaseAuthenticationProvider databaseAuthenticationProvider;
     private final UserDetailsServiceImpl userDetailsService;
@@ -38,6 +44,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutSuccessUrl("/login")
+                .addLogoutHandler((request, response, authentication) -> {
+                    if (authentication != null && authentication.getPrincipal() instanceof User) {
+                        User user = (User) authentication.getPrincipal();
+                        LOG.info("User logged out: userId={}, username='{}'", user.getId(), user.getUsername());
+                        auditLogger.audit("User logged out: username='" + user.getUsername() + "'");
+                    }
+                })
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
 

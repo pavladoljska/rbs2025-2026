@@ -127,6 +127,8 @@ public class ReservationController {
         r.setTotalPrice(totalPrice);
 
         reservationRepository.create(r);
+        auditLogger.audit("Created reservation: hotelId=" + hotelId + ", roomTypeId=" + roomTypeId
+                + ", startDate=" + startDate + ", endDate=" + endDate + ", totalPrice=" + totalPrice);
 
         return redirectPage + "?created=true";
     }
@@ -134,6 +136,7 @@ public class ReservationController {
     @PostMapping("/reservations/delete")
     @PreAuthorize("hasAuthority('VIEW_RESERVATION')")
     public String delete(@RequestParam Integer id) {
+        auditLogger.audit("Deleted reservation: reservationId=" + id);
         reservationRepository.deleteById(id);
         return "redirect:/reservations/view";
     }

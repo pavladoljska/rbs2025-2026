@@ -31,7 +31,7 @@ public class HashedUserRepository {
                 return new HashedUser(username, passwordHash, salt, totpKey);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to find hashed user by username", e);
         }
         return null;
     }
@@ -45,7 +45,7 @@ public class HashedUserRepository {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to save TOTP key for user", e);
         }
     }
 }

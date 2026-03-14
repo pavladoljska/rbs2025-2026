@@ -1,6 +1,7 @@
 package com.zuehlke.securesoftwaredevelopment.controller;
 
 import com.zuehlke.securesoftwaredevelopment.config.AuditLogger;
+import com.zuehlke.securesoftwaredevelopment.config.Entity;
 import com.zuehlke.securesoftwaredevelopment.config.SecurityUtil;
 import com.zuehlke.securesoftwaredevelopment.domain.Person;
 import com.zuehlke.securesoftwaredevelopment.domain.User;
@@ -25,7 +26,7 @@ import java.util.List;
 public class PersonsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersonsController.class);
-    private static final AuditLogger auditLogger = AuditLogger.getAuditLogger(PersonRepository.class);
+    private static final AuditLogger auditLogger = AuditLogger.getAuditLogger(PersonsController.class);
 
     private final PersonRepository personRepository;
     private final UserRepository userRepository;
@@ -59,10 +60,13 @@ public class PersonsController {
     public ResponseEntity<Void> person(@PathVariable int id) {
         User currentUser = SecurityUtil.getCurrentUser();
         if (!SecurityUtil.hasPermission("VIEW_PERSON") && currentUser.getId() != id) {
+            LOG.warn("User id={} attempted to delete person id={} without permission", currentUser.getId(), id);
             throw new AccessDeniedException("You can only delete your own profile.");
         }
+        Person personBefore = personRepository.get("" + id);
         personRepository.delete(id);
         userRepository.delete(id);
+        auditLogger.audit("Deleted person: id=" + id + ", firstName='" + personBefore.getFirstName() + "', lastName='" + personBefore.getLastName() + "'");
 
         return ResponseEntity.noContent().build();
     }
@@ -72,14 +76,21 @@ public class PersonsController {
     public String updatePerson(Person person, String username, HttpSession session, @RequestParam("csrfToken") String csrfToken) {
         String csrf = session.getAttribute("CSRF_TOKEN").toString();
         if (!csrf.equals(csrfToken)) {
+            LOG.warn("CSRF token mismatch for user id={} when updating person id={}", SecurityUtil.getCurrentUser() != null ? SecurityUtil.getCurrentUser().getId() : "unknown", person.getId());
             return "redirect:/error";
         }
         User currentUser = SecurityUtil.getCurrentUser();
         if (!SecurityUtil.hasPermission("VIEW_PERSON") && currentUser.getId() != Integer.parseInt(person.getId())) {
+            LOG.warn("User id={} attempted to update person id={} without permission", currentUser.getId(), person.getId());
             throw new AccessDeniedException("You can only update your own profile.");
         }
+        Person personBefore = personRepository.get(person.getId());
+        String oldUsername = userRepository.findUsername(Integer.parseInt(person.getId()));
         personRepository.update(person);
         userRepository.updateUsername(Integer.parseInt(person.getId()), username);
+        auditLogger.auditChange(new Entity("Person", person.getId(),
+                "firstName='" + personBefore.getFirstName() + "', lastName='" + personBefore.getLastName() + "', email='" + personBefore.getEmail() + "', username='" + oldUsername + "'",
+                "firstName='" + person.getFirstName() + "', lastName='" + person.getLastName() + "', email='" + person.getEmail() + "', username='" + username + "'"));
         if(SecurityUtil.hasPermission("VIEW_PERSON")) {
             return "redirect:/persons/" + person.getId();
         }
@@ -97,6 +108,7 @@ public class PersonsController {
     @ResponseBody
     @PreAuthorize("hasAuthority('VIEW_PERSONS_LIST')")
     public List<Person> searchPersons(@RequestParam String searchTerm) throws SQLException {
+        LOG.debug("Person search performed: searchTerm='{}'", searchTerm);
         return personRepository.search(searchTerm);
     }
 }

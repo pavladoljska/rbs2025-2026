@@ -115,6 +115,7 @@ public class HotelController {
 
         Hotel hotel = new Hotel(cityId, name, description, address);
         hotelRepository.create(hotel);
+        LOG.info("Hotel created: name='{}', cityId={}", name, cityId);
 
         return "redirect:/hotels/new-hotel";
     }
@@ -130,6 +131,7 @@ public class HotelController {
     @ResponseBody
     @PreAuthorize("hasAuthority('VIEW_HOTEL_LIST')")
     public List<Hotel> search(@RequestParam("query") String query) throws SQLException {
+        LOG.debug("Hotel search performed: query='{}'", query);
         return hotelRepository.search(query);
     }
 }

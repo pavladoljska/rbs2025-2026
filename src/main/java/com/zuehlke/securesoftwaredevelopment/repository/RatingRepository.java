@@ -44,7 +44,7 @@ public class RatingRepository {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to create/update rating for hotelId={}, userId={}", rating.getHotelId(), rating.getUserId(), e);
         }
     }
 
@@ -58,7 +58,7 @@ public class RatingRepository {
                 ratingList.add(new Rating(rs.getInt(1), rs.getInt(2), rs.getInt(3)));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to get ratings for hotelId={}", hotelId, e);
         }
         return ratingList;
     }

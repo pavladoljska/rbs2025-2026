@@ -43,7 +43,7 @@ public class RoomRepository {
                 roomTypes.add(new RoomType(id, hotelId, name, capacity, pricePerNight, totalRooms));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to get room types for hotelId={}", hotelId, e);
         }
 
         return roomTypes;
@@ -72,7 +72,7 @@ public class RoomRepository {
                 return roomType;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to find room type with id={} for hotelId={}", roomTypeId, hotelId, e);
         }
 
         return null;

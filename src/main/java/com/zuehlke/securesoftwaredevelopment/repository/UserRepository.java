@@ -31,7 +31,7 @@ public class UserRepository {
                 return new User(id, username1, password);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to find user by username", e);
         }
         return null;
     }
@@ -46,7 +46,7 @@ public class UserRepository {
                 return username;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to find username for userId={}", id, e);
         }
         return null;
     }
@@ -60,7 +60,7 @@ public class UserRepository {
             statement.setString(1, username);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to update username for userId={}", id, e);
         }
     }
 
@@ -71,7 +71,7 @@ public class UserRepository {
              ResultSet rs = statement.executeQuery(query)) {
             return rs.next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to validate credentials for username='{}'", username, e);
         }
         return false;
     }
@@ -83,7 +83,7 @@ public class UserRepository {
         ) {
             statement.executeUpdate(query);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to delete user with id={}", userId, e);
         }
     }
 }

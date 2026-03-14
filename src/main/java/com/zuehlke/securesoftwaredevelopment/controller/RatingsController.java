@@ -27,6 +27,7 @@ public class RatingsController {
         User user = (User) authentication.getPrincipal();
         rating.setUserId(user.getId());
         ratingRepository.createOrUpdate(rating);
+        LOG.info("Rating submitted: userId={}, hotelId={}, rating={}", user.getId(), rating.getHotelId(), rating.getRating());
 
         return "redirect:/hotels?id=" + rating.getHotelId();
     }

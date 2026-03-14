@@ -54,7 +54,7 @@ public class ReservationRepository {
 
             return id;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to create reservation for userId={}, hotelId={}", r.getUserId(), r.getHotelId(), e);
         }
 
         return id;
@@ -72,7 +72,7 @@ public class ReservationRepository {
                 reservationList.add(r);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to retrieve all reservations", e);
         }
 
         return reservationList;
@@ -92,7 +92,7 @@ public class ReservationRepository {
                 reservationList.add(r);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to get reservations for userId={}", userId, e);
         }
 
         return reservationList;
@@ -134,7 +134,7 @@ public class ReservationRepository {
         ) {
             statement.executeUpdate(query);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Failed to delete reservation with id={}", id, e);
         }
     }
 }
