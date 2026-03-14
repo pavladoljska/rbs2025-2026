@@ -61,10 +61,12 @@ public class CityRepository {
     }
 
     public List<City> findByName(String name) {
-        String query = "SELECT c.id, c.countryId, c.name FROM city as c WHERE c.name like '" + name + "'";
+        String query = "SELECT c.id, c.countryId, c.name FROM city as c WHERE c.name like ?";
         try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
+            PreparedStatement statement = connection.prepareStatement(query);) {
+
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
             List<City> cityList = new ArrayList<>();
             while (rs.next()) {
                 int id = rs.getInt(1);
